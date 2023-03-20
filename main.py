@@ -132,4 +132,4 @@ for epoch in range(args.start,args.epoch):
             logs.add_scalar('loss',reduce_all_loss.item(),iters)
             logs.add_scalar('lr',max_lr,iters)
 
-    torch.save({'net':model.parameters(),'optimizer':optimizer.state_dict(),'args':args},os.path.join(args.path,'epoch-{}.pth'.format(args.epoch)))
+    torch.save({'net':model.state_dict(),'optimizer':optimizer.state_dict(),'args':args},os.path.join(args.path,'epoch-{}.pth'.format(args.epoch)))
