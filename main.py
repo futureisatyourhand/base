@@ -74,6 +74,7 @@ if args.distributed:
     args.lr=args.blr*word_size*args.batch_size/256.
     sampler=torch.utils.data.DistributedSampler(dataset,num_replicas=word_size,rank=global_rank,shuffle=True)
 else:
+    word_size=1
     sampler=torch.utils.data.RandomSampler(dataset)
     
 criterion=torch.nn.CrossEntropyLoss()
