@@ -37,6 +37,7 @@ parser.add_argument('--warmup_epochs',type=int,default=5,help='')
 
 parser.add_argument('--log_dir',default='/tmp/train/logs',help='')
 parser.add_argument('--data',default='/tmp/train/data',help='')
+parser.add_argument('--input_size',default=224,type=int,help='')
 
 args=parser.parser_args()
 
