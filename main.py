@@ -42,7 +42,7 @@ parser.add_argument('--input_size',default=224,type=int,help='')
 args=parser.parser_args()
 
 logs=SummaryWriter(log_dir=args.log_dir)
-devices=torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+devices=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 ## adjust learning rate，linear if epoch <warmup epoch.cos if epoch>=warmup_epoch
 def adjust_lr(optimizer,epoch,args):
@@ -105,22 +105,20 @@ for epoch in range(args.start,args.epoch):
         loss=criterion(out,target)
 
         loss_value=loss.item()
-
-        loss.backward()
-
-        ##clip grad by torch.nn.utils.clip_grad_norm()
-        torch.nn.utils.clip_grad_norm(model.parameters(),max_norm=args.max_norm)
+        loss/=args.accum
+        loss.backward()        
 
         ##get max learning rate to write summary
         min_lr=0.0
         max_lr=10.0
         for group in optimizer.param_groups:
             min_lr=min(minlr,group['lr'])
-            max_lr=max(maxlr,group['lr'])
-            
-        loss=loss/args.accum
+            max_lr=max(maxlr,group['lr'])            
         
         if idx%args.accum==0 or idx+1==len(dataloader):
+            ##clip grad by torch.nn.utils.clip_grad_norm()
+            torch.nn.utils.clip_grad_norm(model.parameters(),max_norm=args.max_norm)
+            
             optimizer.step()
             optimizer.zero_grad()
             
